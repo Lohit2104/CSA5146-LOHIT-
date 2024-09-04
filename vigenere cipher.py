@@ -1,36 +1,48 @@
 def generate_key(text, key):
+    """Generate a key by repeating or truncating the original key to match the text length."""
     key = list(key)
     if len(text) == len(key):
-        return key
+        return "".join(key)
     else:
         for i in range(len(text) - len(key)):
             key.append(key[i % len(key)])
     return "".join(key)
 
-
-def vigenere_cipher(text, key):
-    encrypted_text = []
+def vigenere_cipher(text, key, mode='encrypt'):
+    """Encrypt or decrypt the text using the Vigenère cipher."""
+    result = []
     key = generate_key(text, key)
-    
     for i in range(len(text)):
-       
-        if text[i].isupper():
-            x = (ord(text[i]) + ord(key[i].upper()) - 2 * ord('A')) % 26
-            x += ord('A')
-            encrypted_text.append(chr(x))
-        elif text[i].islower():
-            x = (ord(text[i]) + ord(key[i].lower()) - 2 * ord('a')) % 26
-            x += ord('a')
-            encrypted_text.append(chr(x))
+        char = text[i]
+        if char.isalpha():
+            shift = ord(key[i].lower()) - 97  # Convert key char to lower and calculate shift
+            if mode == 'encrypt':
+                if char.isupper():
+                    result.append(chr((ord(char) + shift - 65) % 26 + 65))
+                else:
+                    result.append(chr((ord(char) + shift - 97) % 26 + 97))
+            elif mode == 'decrypt':
+                if char.isupper():
+                    result.append(chr((ord(char) - shift - 65) % 26 + 65))
+                else:
+                    result.append(chr((ord(char) - shift - 97) % 26 + 97))
         else:
-           
-            encrypted_text.append(text[i])
-    
-    return "".join(encrypted_text)
+            result.append(char)  # Non-alphabet characters remain unchanged
+    return "".join(result)
 
-text = input("Enter the text to encrypt: ")
-key = input("Enter the keyword: ")
+def main():
+    # Input text
+    text = input("Enter the text: ")
+    # Input key
+    key = input("Enter the key: ")
 
-encrypted_text = vigenere_cipher(text, key)
+    # Encrypt the text
+    encrypted_text = vigenere_cipher(text, key, mode='encrypt')
+    print(f"Encrypted text: {encrypted_text}")
 
-print("Encrypted text:", encrypted_text)
+    # Decrypt the text
+    decrypted_text = vigenere_cipher(encrypted_text, key, mode='decrypt')
+    print(f"Decrypted text: {decrypted_text}")
+
+if __name__ == "__main__":
+    main()
