@@ -1,27 +1,23 @@
-# Function to perform Caesar Cipher encryption
-def caesar_cipher(text, shift):
-    encrypted_text = ""
-
-    # Loop through each character in the text
+def caesar_cipher(text, shift, mode):
+    result = ""
+    shift = shift % 26  # Ensure shift is within the range of 0-25
+    
     for char in text:
-        # Check if the character is an uppercase letter
-        if char.isupper():
-            encrypted_text += chr((ord(char) + shift - 65) % 26 + 65)
-        # Check if the character is a lowercase letter
-        elif char.islower():
-            encrypted_text += chr((ord(char) + shift - 97) % 26 + 97)
-        # If it's not a letter, add it as it is
+        if char.isalpha():
+            shift_amount = shift if mode == "encrypt" else -shift
+            base = ord('A') if char.isupper() else ord('a')
+            result += chr((ord(char) - base + shift_amount) % 26 + base)
         else:
-            encrypted_text += char
+            result += char
+    
+    return result
 
-    return encrypted_text
-
-# Get user input for the text and the shift value
-text = input("Enter the text to encrypt: ")
+text = input("Enter the text: ")
 shift = int(input("Enter the shift value: "))
 
-# Encrypt the text using Caesar Cipher
-encrypted_text = caesar_cipher(text, shift)
+encrypted_text = caesar_cipher(text, shift, "encrypt")
+decrypted_text = caesar_cipher(encrypted_text, shift, "decrypt")
 
-# Display the encrypted text
-print("Encrypted text:", encrypted_text)
+print(f"Original text: {text}")
+print(f"Encrypted text: {encrypted_text}")
+print(f"Decrypted text: {decrypted_text}")
